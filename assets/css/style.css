@@ -1,0 +1,44 @@
+body {
+    background-color: black;
+    color:white;
+    position: relative;
+}
+
+.page-head-title {
+    color: black;
+    margin:0;
+    text-align: center;
+    font-size: 100px;
+    font-style: italic;
+}
+
+.page-head-subtext {
+    color: black;
+    margin:0;
+    text-align: center;
+    font-size: 30px;
+    font-style: italic;
+}
+
+#title-container {
+    background-image: linear-gradient(red 0%,yellow 25%,orange 50%,brown 100%);  
+}
+
+h2 {
+    font-size: 50px;
+}
+#img-target {
+    padding-bottom: 50px;
+}
+
+#container {
+    text-align: center;
+}
+
+#game-div {
+    width: 300px;
+    padding: 20px;
+    margin: auto;
+    border: 7px dotted #f5f5f5;
+}
+  
