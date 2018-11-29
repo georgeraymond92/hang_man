@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hangman Game</title>
+    <!-- lind to the external CSS file -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="container">
+        <div>
+            <h1 class="page-head">Hangman Game!!</h1>
+            <h2 class="page-head-subtext">Try your hand at a game of Hangman!!</h2>
+        </div>
+        <div>
+            <h2 id="music"></h2>
+            <div id="img-target"><img src="assets/images/hangman.png" alt="hangman stick figure"></div>
+        </div>
+        <!-- div for the game contents -->
+        <div id="game-div">
+            <p>Press any key to start the game</p>
+            <div>
+                <h3 id="wins-title">Wins</h3>
+                <div id="wins"></div>
+            </div>
+            <div id="word-display">
+                <h3 class="section-title">Current Word</h3>
+                <div id="current-word"></div>
+            </div>
+            <div id="guess-section">
+                <h3 class="guess-title">Guesses Left</h3>
+                <div id="displayguesses"></div>
+            </div>
+            <div id="letters-title">
+                <h3 id="letters-title">Letters Guessed</h3>
+                <div id="letters-guessed"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- link to external JS file -->
+    <script type="text/javascript" src="assets/javascript/logic.js"></script>
+</body>
+</html>
