@@ -33,7 +33,7 @@ var hangman = {
             image:"smartphone.jpeg"
         },
         habanero: {
-            image:"habamero.jpeg"
+            image:"habanero.jpeg"
         },
         newspaper: {
             image:"newspaper.jpeg"
@@ -43,6 +43,7 @@ var hangman = {
         }
     },
 
+    // variables needed
     currentWord: null,
     lettersInWord:[],
     matches: [],
@@ -50,58 +51,154 @@ var hangman = {
     guessesLeft: 0,
     totalGuesses: 0,
     letterGuessed: null,
-    correctGuess: false,
     wins: 0,
 
+    // this functions sets up the game on page load
     setupGame: function() {
         // setting a random word to currentWord
         var objKeys = Object.keys(this.hangmanWords);
         this.currentWord = objKeys[Math.floor(Math.random() * objKeys.length)];
         this.lettersInWord = this.currentWord.split("");
-        this.guessesLeft = 10;
-        console.log(this.currentWord);
-        console.log(this.lettersInWord);
+        document.querySelector("#letters-guessed").innerHTML = "";
+        this.checkLocal();
+        document.querySelector("#wins").innerHTML = this.wins;
+        this.updateWordDisplay();
+        this.processUpdateTotalGuesses();
 
     },
+    
+    // updated the page on key up after each guess and restarts if you
+    //  are out of guesses.
+    updatePage: function(letter) {
+        if (this.guessesLeft === 0) {
+            this.restartGame();
+        }
+        else{
+            this.updateGuesses(letter);
 
-    checkGuess: function() {
-        for (var i = 0; i < this.lettersInWord.length; i++) {
-            if (this.letterGuessed === this.lettersInWord[i]){
-                this.lettersInWord.splice(i , 1);
-                this.correctGuess = true;
-                i--;
+            this.updateMatchedLetters(letter);
+
+            this.updateWordDisplay();
+
+            if(this.updateWins() === true) {
+                this.restartGame();
             }
         }
-        if (this.lettersInWord.length === 0) {
-            console.log("you win!!!")
-            this.wins++;
-            console.log("wins: " + this.wins);
-            this.setupGame();
-        }
-        if (this.correctGuess === false){
+
+    },
+
+    processUpdateTotalGuesses: function() {
+        this.totalGuesses = this.lettersInWord.length +5;
+        this.guessesLeft = this.totalGuesses;
+
+        document.querySelector("#displayguesses").innerHTML = this.guessesLeft;
+    },
+
+    updateGuesses: function(letter) {
+        if((this.wrongGuesses.indexOf(letter) === -1) && (this.lettersInWord.indexOf(letter) === -1)){
+            this.wrongGuesses.push(letter);
             this.guessesLeft--;
+            document.querySelector("#displayguesses").innerHTML = this.guessesLeft;
+            document.querySelector("#letters-guessed").innerHTML = this.wrongGuesses.join(", ");
         }
-        console.log("guesses left: " + this.guessesLeft);
-        console.log("letters left: " + this.lettersInWord);
-        console.log("is correct: " + this.correctGuess);
-        this.correctGuess = false;
-        
-    },
-    takeGuess: function() {
-        this.checkGuess()
     },
 
-    updatePage: function() {
+    updateMatchedLetters: function(letter) {
+        for (var i = 0; i < this.lettersInWord.length; i++) {
+            if ((letter === this.lettersInWord[i]) && (this.matches.indexOf(letter) === -1)) {
+                this.matches.push(letter);
+            }
 
+        }
+    },
+
+    // function updates the word on the dom to show the letters guessed int he word.
+    updateWordDisplay: function() {
+
+        var wordDisplay = "";
+
+        // Loop through the letters of the current word
+        for (var i = 0; i < this.lettersInWord.length; i++) {
+            // If the current letter has been guessed, display that letter.
+            if (this.matches.indexOf(this.lettersInWord[i]) !== -1) {
+            wordDisplay += this.lettersInWord[i];
+            }
+            // If it hasn't been guessed, display a "_" instead.
+            // with spaces on both sides
+            else {
+                wordDisplay += "&nbsp;_&nbsp;";
+            }
+        }
+        document.querySelector("#current-word").innerHTML = wordDisplay;
+    },
+
+    // restarts the game and sets your guesses back to zero
+    restartGame: function() {
+        document.querySelector("#displayguesses").innerHTML = "";
+        this.currentWord = null;
+        this.lettersInWord = [];
+        this.matches = [];
+        this.wrongGuesses = [];
+        this.guessesLeft = 0;
+        this.totalGuesses = 0;
+        this.letterGuessed = null;
+        this.setupGame();
+        this.updateWordDisplay();
+    },
+
+    // detects if you win or loose and update the data
+    updateWins: function() {
+        var win;
+
+
+        if (this.matches.length === 0) {
+            win = false;
+        }
+        else {
+            win = true;
+        }
+
+        for(var i = 0; i < this.lettersInWord.length; i++) {
+            if (this.matches.indexOf(this.lettersInWord[i]) === -1) {
+                win = false;
+            }
+        }
+
+        if (win) {
+
+            this.wins++;
+            // console.log("setting the local storage")
+            window.localStorage.setItem("wins", this.wins);
+            // console.log("local: " + window.localStorage.getItem("wins"));
+            
+
+            document.querySelector("#wins").innerHTML = this.wins;
+
+            document.querySelector("#img-target").innerHTML = "<img class='image' src='assets/images/" +
+            this.hangmanWords[this.currentWord].image + "'>"
+
+            return true
+        }
+        return false;
+    },
+
+    // checks local storage to see if you have any wins
+    checkLocal: function() {
+        if (Number(window.localStorage.getItem("wins")) !== null) {
+            this.wins = window.localStorage.getItem("wins");
+        }else {
+            this.wins = 0;
+        }
     }
-}
-
-hangman.setupGame();
-
-document.onkeydown = function(event) {
-    // console.log(String.fromCharCode(event.which).toLowerCase());
-    hangman.letterGuessed = String.fromCharCode(event.which).toLowerCase();
-    hangman.takeGuess()
-    console.log(hangman.letterGuessed);
 };
 
+// runs on page load to set up the game
+hangman.setupGame();
+
+// listening for the keypress
+document.onkeyup = function(event) {
+    
+    hangman.letterGuessed = String.fromCharCode(event.which).toLowerCase();
+
+    hangman.updatePage(hangman.letterGuessed);
+};
